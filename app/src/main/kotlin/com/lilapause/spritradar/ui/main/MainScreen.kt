@@ -1170,7 +1170,7 @@ private fun DataAndLegalInfoDialog(
             ) {
                 SpritRadarLogoIcon(size = 32.dp)
                 Text(
-                    text = "Datenquellen, Impressum & Datenschutz",
+                    text = "Datenquellen & Datenschutz",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.ExtraBold
                 )
@@ -1184,19 +1184,9 @@ private fun DataAndLegalInfoDialog(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                // 1. Impressum (§ 5 DDG) & Verantwortliche Stelle (Art. 4 Nr. 7 DSGVO)
+                // 1. Tankerkönig / MTS-K Attribution (CC BY 4.0)
                 LegalSectionBox(
-                    title = "1. Impressum (§ 5 DDG) & Verantwortliche",
-                    body = "Tanja Reize\nWilhelm-Busch-Str. 41\n81477 München, Deutschland\nE-Mail: tanjareize@web.de\n\nApp-Paketname: com.lilapause.spritradar • Version 2.0 (Build 2)",
-                    linkLabel = "✉ E-Mail an tanjareize@web.de senden",
-                    onLinkClick = {
-                        openExternalUrl(context, "mailto:tanjareize@web.de?subject=SpritRadar%20Anfrage")
-                    }
-                )
-
-                // 2. Tankerkönig / MTS-K Attribution (CC BY 4.0)
-                LegalSectionBox(
-                    title = "2. Kraftstoffpreise & Tankstellendaten",
+                    title = "1. Kraftstoffpreise & Tankstellendaten",
                     body = buildString {
                         append("Datenquelle: Tankerkönig (https://creativecommons.tankerkoenig.de) / Markttransparenzstelle für Kraftstoffe (MTS-K).\n")
                         append("Lizenz: Creative Commons Namensnennung 4.0 International (CC BY 4.0).\n")
@@ -1211,9 +1201,9 @@ private fun DataAndLegalInfoDialog(
                     }
                 )
 
-                // 3. OpenStreetMap / OSRM Attribution (ODbL)
+                // 2. OpenStreetMap / OSRM Attribution (ODbL)
                 LegalSectionBox(
-                    title = "3. Geodaten, Ortssuche & Routenberechnung",
+                    title = "2. Geodaten, Ortssuche & Routenberechnung",
                     body = "Ortsvorschläge (Nominatim) und Straßenrouten-Geometrien (Project OSRM) basieren auf Geodaten von © OpenStreetMap-Mitwirkenden unter der Open Database License (ODbL 1.0).",
                     linkLabel = "OpenStreetMap Copyright & Lizenz ↗",
                     onLinkClick = {
@@ -1221,21 +1211,21 @@ private fun DataAndLegalInfoDialog(
                     }
                 )
 
-                // 4. Privacy / GDPR Notice (Art. 13, 14 DSGVO) + Ads & Google Play Billing Donations
+                // 3. Privacy / GDPR Notice (Art. 13, 14 DSGVO) + Ads & Google Play Billing Donations
                 LegalSectionBox(
-                    title = "4. Datenschutzerklärung (DSGVO), Werbung & Spenden",
-                    body = "• Verantwortliche: Tanja Reize, Wilhelm-Busch-Str. 41, 81477 München (tanjareize@web.de).\n• Standort (GPS, Art. 6 Abs. 1 lit. a DSGVO): Dein Standort wird ausschließlich im Vordergrund bei aktivem Antippen des ‚GPS‘-Buttons abgefragt (keine Hintergrund-Ortung).\n• Externe APIs (Art. 6 Abs. 1 lit. b DSGVO): Zur Berechnung von Orten, Routen und Preisen werden Suchkoordinaten/Ortsnamen per HTTPS an Tankerkönig (MTS-K), OpenStreetMap Nominatim und Project OSRM übermittelt.\n• Werbefenster (§ 6 Abs. 1 DDG / Art. 6 Abs. 1 lit. f DSGVO): Am unteren Bildschirmrand wird ein kompaktes, als ‚Anzeige‘ gekennzeichnetes Banner eingeblendet. Erst beim aktiven Antippen einer Anzeige wird die verlinkte Partner-Webseite im externen Browser geöffnet.\n• Freiwillige Unterstützung (Google Play In-App Billing): Freiwillige Zuwendungen erfolgen ausschließlich über das offizielle Abrechnungssystem des Google Play Stores (Google Ireland Limited, com.android.vending.BILLING) mit den im Play Store zugelassenen Zahlungsarten (Google Pay, Kredit-/Debitkarte, Klarna, Handyrechnung, Play-Guthaben). In der App selbst werden keine Zahlungsdaten erhoben oder gespeichert.\n• Betroffenenrechte (Art. 15–21, 77 DSGVO): Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch, Widerruf sowie Beschwerderecht bei einer Aufsichtsbehörde (z. B. BayLDA, Promenade 18, 91522 Ansbach)."
+                    title = "3. Datenschutzerklärung (DSGVO), Werbung & Spenden",
+                    body = "• Standort (GPS, Art. 6 Abs. 1 lit. a DSGVO): Dein Standort wird ausschließlich im Vordergrund bei aktivem Antippen des ‚GPS‘-Buttons abgefragt (keine Hintergrund-Ortung).\n• Externe APIs (Art. 6 Abs. 1 lit. b DSGVO): Zur Berechnung von Orten, Routen und Preisen werden Suchkoordinaten/Ortsnamen per HTTPS an Tankerkönig (MTS-K), OpenStreetMap Nominatim und Project OSRM übermittelt.\n• Werbefenster (§ 6 Abs. 1 DDG / Art. 6 Abs. 1 lit. f DSGVO): Am unteren Bildschirmrand wird ein kompaktes, als ‚Anzeige‘ gekennzeichnetes Banner eingeblendet. Erst beim aktiven Antippen einer Anzeige wird die verlinkte Partner-Webseite im externen Browser geöffnet.\n• Freiwillige Unterstützung (Google Play In-App Billing): Freiwillige Zuwendungen erfolgen ausschließlich über das offizielle Abrechnungssystem des Google Play Stores (Google Ireland Limited, com.android.vending.BILLING) mit den im Play Store zugelassenen Zahlungsarten (Google Pay, Kredit-/Debitkarte, Klarna, Handyrechnung, Play-Guthaben). In der App selbst werden keine Zahlungsdaten erhoben oder gespeichert.\n• Lokale Datenspeicherung: Fahrzeugverbrauch, Tankgröße und deine Favoriten-Routen liegen ausschließlich lokal auf deinem Endgerät und können jederzeit gelöscht werden.\n• Betroffenenrechte (Art. 15–21, 77 DSGVO): Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch, Widerruf sowie Beschwerderecht bei einer zuständigen Datenschutz-Aufsichtsbehörde."
                 )
 
-                // 5. Disclaimer on Price Accuracy & Road Safety
+                // 4. Disclaimer on Price Accuracy & Road Safety
                 LegalSectionBox(
-                    title = "5. Haftungsausschluss & StVO-Hinweis",
+                    title = "4. Haftungsausschluss & StVO-Hinweis",
                     body = "Alle Preis-, Umweg-, Verbrauchs- und Ersparnisberechnungen sowie die historische Preis-Ampel dienen ausschließlich der unverbindlichen Orientierung und erfolgen ohne Gewähr auf Richtigkeit, Vollständigkeit und Aktualität. Verbindlich ist ausschließlich der vor Ort an der Zapfsäule ausgewiesene Preis.\n\nSicherheitshinweis (§ 23 Abs. 1a StVO): Bitte bediene die App niemals während der Fahrt als Fahrzeugführer."
                 )
 
-                // 6. Trademarks
+                // 5. Trademarks
                 LegalSectionBox(
-                    title = "6. Markenrechtlicher Hinweis",
+                    title = "5. Markenrechtlicher Hinweis",
                     body = "Alle genannten Marken- und Tankstellenbezeichnungen (wie Aral, Shell, TotalEnergies, Esso, JET, AVIA, HEM, bft, STAR, Google Maps, Google Play) sind Eigentum der jeweiligen Rechteinhaber und dienen ausschließlich der sachlichen Information."
                 )
 

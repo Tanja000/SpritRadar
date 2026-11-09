@@ -317,7 +317,8 @@ fun DonationDialog(
                         .setProductList(productList)
                         .build()
 
-                    billingClient.queryProductDetailsAsync(params) { result, detailsList ->
+                    billingClient.queryProductDetailsAsync(params) { result, queryResult ->
+                        val detailsList = queryResult.productDetailsList.orEmpty()
                         if (result.responseCode == BillingClient.BillingResponseCode.OK && detailsList.isNotEmpty()) {
                             productDetailsMap = detailsList.associateBy { it.productId }
                         }
@@ -596,8 +597,8 @@ private fun queryAndLaunchProduct(
         .setProductList(productList)
         .build()
 
-    billingClient.queryProductDetailsAsync(params) { billingResult, productDetailsList ->
-        val details = productDetailsList.firstOrNull()
+    billingClient.queryProductDetailsAsync(params) { billingResult, queryResult ->
+        val details = queryResult.productDetailsList?.firstOrNull()
         if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && details != null) {
             activity.runOnUiThread {
                 val flowParams = BillingFlowParams.newBuilder()
