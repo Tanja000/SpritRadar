@@ -1221,10 +1221,10 @@ private fun DataAndLegalInfoDialog(
                     }
                 )
 
-                // 4. Privacy / GDPR Notice (Art. 13, 14 DSGVO) + Ads & Donations
+                // 4. Privacy / GDPR Notice (Art. 13, 14 DSGVO) + Ads & Google Play Billing Donations
                 LegalSectionBox(
                     title = "4. Datenschutzerklärung (DSGVO), Werbung & Spenden",
-                    body = "• Verantwortliche: Tanja Reize, Wilhelm-Busch-Str. 41, 81477 München (tanjareize@web.de).\n• Standort (GPS, Art. 6 Abs. 1 lit. a DSGVO): Dein Standort wird ausschließlich im Vordergrund bei aktivem Antippen des ‚GPS‘-Buttons abgefragt (keine Hintergrund-Ortung).\n• Externe APIs (Art. 6 Abs. 1 lit. b DSGVO): Zur Berechnung von Orten, Routen und Preisen werden Suchkoordinaten/Ortsnamen per HTTPS an Tankerkönig (MTS-K), OpenStreetMap Nominatim und Project OSRM übermittelt.\n• Werbefenster (§ 6 Abs. 1 DDG / Art. 6 Abs. 1 lit. f DSGVO): Am unteren Bildschirmrand wird ein kompaktes, als ‚Anzeige‘ gekennzeichnetes Banner eingeblendet. Erst beim aktiven Antippen einer Anzeige wird die verlinkte Partner-Webseite im externen Browser geöffnet.\n• Freiwillige Spenden (PayPal): Beim Klick auf ‚Spenden‘ wirst du extern zu PayPal (PayPal (Europe) S.à r.l. et Cie, S.C.A.) bzw. deinem E-Mail-Programm weitergeleitet. In der App selbst werden keine Zahlungsdaten erhoben.\n• Betroffenenrechte (Art. 15–21, 77 DSGVO): Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch, Widerruf sowie Beschwerderecht bei einer Aufsichtsbehörde (z. B. BayLDA, Promenade 18, 91522 Ansbach)."
+                    body = "• Verantwortliche: Tanja Reize, Wilhelm-Busch-Str. 41, 81477 München (tanjareize@web.de).\n• Standort (GPS, Art. 6 Abs. 1 lit. a DSGVO): Dein Standort wird ausschließlich im Vordergrund bei aktivem Antippen des ‚GPS‘-Buttons abgefragt (keine Hintergrund-Ortung).\n• Externe APIs (Art. 6 Abs. 1 lit. b DSGVO): Zur Berechnung von Orten, Routen und Preisen werden Suchkoordinaten/Ortsnamen per HTTPS an Tankerkönig (MTS-K), OpenStreetMap Nominatim und Project OSRM übermittelt.\n• Werbefenster (§ 6 Abs. 1 DDG / Art. 6 Abs. 1 lit. f DSGVO): Am unteren Bildschirmrand wird ein kompaktes, als ‚Anzeige‘ gekennzeichnetes Banner eingeblendet. Erst beim aktiven Antippen einer Anzeige wird die verlinkte Partner-Webseite im externen Browser geöffnet.\n• Freiwillige Unterstützung (Google Play In-App Billing): Freiwillige Zuwendungen erfolgen ausschließlich über das offizielle Abrechnungssystem des Google Play Stores (Google Ireland Limited, com.android.vending.BILLING) mit den im Play Store zugelassenen Zahlungsarten (Google Pay, Kredit-/Debitkarte, Klarna, Handyrechnung, Play-Guthaben). In der App selbst werden keine Zahlungsdaten erhoben oder gespeichert.\n• Betroffenenrechte (Art. 15–21, 77 DSGVO): Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch, Widerruf sowie Beschwerderecht bei einer Aufsichtsbehörde (z. B. BayLDA, Promenade 18, 91522 Ansbach)."
                 )
 
                 // 5. Disclaimer on Price Accuracy & Road Safety
@@ -1236,7 +1236,7 @@ private fun DataAndLegalInfoDialog(
                 // 6. Trademarks
                 LegalSectionBox(
                     title = "6. Markenrechtlicher Hinweis",
-                    body = "Alle genannten Marken- und Tankstellenbezeichnungen (wie Aral, Shell, TotalEnergies, Esso, JET, AVIA, HEM, bft, STAR, Google Maps, PayPal) sind Eigentum der jeweiligen Rechteinhaber und dienen ausschließlich der sachlichen Information."
+                    body = "Alle genannten Marken- und Tankstellenbezeichnungen (wie Aral, Shell, TotalEnergies, Esso, JET, AVIA, HEM, bft, STAR, Google Maps, Google Play) sind Eigentum der jeweiligen Rechteinhaber und dienen ausschließlich der sachlichen Information."
                 )
 
                 // 7. Quick Actions: Spenden & Daten zurücksetzen

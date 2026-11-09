@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- Required by Google Play Console for apps targeting Android 13+ (API 33+) that declare Ads -->
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+    <!-- Official Google Play In-App Billing permission -->
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <!-- Optional location hardware so tablets/devices without GPS chip remain compatible in Google Play -->
     <uses-feature

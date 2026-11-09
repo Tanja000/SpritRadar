@@ -76,3 +76,18 @@ Alle Kraftstoffpreise basieren auf den offiziellen Echtzeitdaten von Tankerköni
      - *Erhoben / Verarbeitet:* Ja, **nur flüchtig (ephemer)** verarbeitet.
      - *Optional:* Ja (Nutzer können Orte auch manuell eingeben).
      - *Zweck:* **App-Funktionalität** (Ermittlung des Startpunkts für Tankstellen entlang der Route).
+
+---
+
+## 4. In-App-Produkte für die Unterstützungs-/Spenden-Funktion in der Play Console anlegen
+
+Damit Nutzer direkt über die offiziell im Google Play Store zugelassenen Zahlungsmethoden (Google Pay, Kredit-/Debitkarte, Klarna, Handyrechnung, Google Play-Guthaben) spenden können, ist die **Google Play Billing Library v7.1.1** (`com.android.vending.BILLING`) bereits vollständig in `SpritRadar.aab` integriert.
+
+Lege nach dem Upload der `SpritRadar.aab` in der Google Play Console unter **„Monetarisierung mit Play → Produkte → In-App-Produkte“** einfach diese 3 Produkte an und klicke auf **„Aktivieren“**:
+
+| Produkt-ID (exakt so eingeben) | Name | Beschreibung | Standardpreis |
+| :--- | :--- | :--- | :--- |
+| `support_coffee_2` | Kleiner Kaffee-Support | Freiwillige einmalige Unterstützung für SpritRadar | **2,00 €** |
+| `support_fuel_5` | Tank-Bonus Support | Freiwillige einmalige Unterstützung für SpritRadar | **5,00 €** |
+| `support_boost_10` | Super-Unterstützer | Freiwillige einmalige Unterstützung für SpritRadar | **10,00 €** |
+
