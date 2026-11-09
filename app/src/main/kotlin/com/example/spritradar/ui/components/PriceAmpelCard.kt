@@ -132,9 +132,9 @@ fun PriceAmpelCard(
 
             AnimatedVisibility(visible = expanded) {
                 Column(modifier = Modifier.padding(top = 12.dp)) {
-                    Row(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         StatMiniItem(
                             label = "Bestes Zeitfenster",
@@ -206,36 +206,43 @@ fun PriceAmpelCard(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Time-of-day simulator buttons to let user preview Red / Yellow / Green states anytime
+                    // Time-of-day simulator buttons: "Jetzt (Live)" on line 1, the others on line 2 below
                     Text(
                         text = "Ampel-Zeitpunkt testen:",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Row(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
-                        FilterChip(
-                            selected = simulatedHour == null,
-                            onClick = { onSelectSimulatedHour(null) },
-                            label = { Text("Jetzt (Live)", fontSize = 11.sp) }
-                        )
-                        FilterChip(
-                            selected = simulatedHour == 7,
-                            onClick = { onSelectSimulatedHour(7) },
-                            label = { Text("07:00 🔴", fontSize = 11.sp) }
-                        )
-                        FilterChip(
-                            selected = simulatedHour == 14,
-                            onClick = { onSelectSimulatedHour(14) },
-                            label = { Text("14:00 🟡", fontSize = 11.sp) }
-                        )
-                        FilterChip(
-                            selected = simulatedHour == 19,
-                            onClick = { onSelectSimulatedHour(19) },
-                            label = { Text("19:00 🟢", fontSize = 11.sp) }
-                        )
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            FilterChip(
+                                selected = simulatedHour == null,
+                                onClick = { onSelectSimulatedHour(null) },
+                                label = { Text("Jetzt (Live)", fontSize = 12.sp) }
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            FilterChip(
+                                selected = simulatedHour == 7,
+                                onClick = { onSelectSimulatedHour(7) },
+                                label = { Text("07:00 🔴", fontSize = 12.sp) }
+                            )
+                            FilterChip(
+                                selected = simulatedHour == 14,
+                                onClick = { onSelectSimulatedHour(14) },
+                                label = { Text("14:00 🟡", fontSize = 12.sp) }
+                            )
+                            FilterChip(
+                                selected = simulatedHour == 19,
+                                onClick = { onSelectSimulatedHour(19) },
+                                label = { Text("19:00 🟢", fontSize = 12.sp) }
+                            )
+                        }
                     }
                 }
             }

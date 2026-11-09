@@ -357,44 +357,45 @@ fun InteractiveRouteMap(
                     }
                 }
 
-                // Top Map Legend & Reset Button
-                Row(
+                // Top-Left Map Legend
+                Surface(
+                    color = Color(0xCC0F172A),
+                    shape = RoundedCornerShape(20.dp),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .align(Alignment.TopStart)
+                        .padding(10.dp)
                 ) {
-                    Surface(
-                        color = Color(0xCC0F172A),
-                        shape = RoundedCornerShape(20.dp)
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            LegendDot(Color(0xFF16A34A), "Netto-Sieger")
-                            LegendDot(Color(0xFF2563EB), "Direkt")
-                            LegendDot(Color(0xFFDC2626), "Umweg zu teuer")
-                        }
+                        LegendDot(Color(0xFF16A34A), "Netto-Sieger")
+                        LegendDot(Color(0xFF2563EB), "Direkt")
+                        LegendDot(Color(0xFFDC2626), "Umweg zu teuer")
                     }
+                }
 
-                    Surface(
-                        color = Color(0xCC1E293B),
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier.clickable {
+                // Bottom-Right "Zentrieren" Button on the Map
+                Surface(
+                    color = Color(0xDD1E293B),
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(10.dp)
+                        .border(1.dp, Color(0xFF38BDF8).copy(alpha = 0.45f), RoundedCornerShape(14.dp))
+                        .clickable {
                             zoom = 1f
                             panOffset = Offset.Zero
                         }
-                    ) {
-                        Text(
-                            text = "⟲ Zentrieren (${detourOption.label})",
-                            color = Color.White,
-                            style = MaterialTheme.typography.labelSmall,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-                        )
-                    }
+                ) {
+                    Text(
+                        text = "Zentrieren",
+                        color = Color.White,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp)
+                    )
                 }
             }
 

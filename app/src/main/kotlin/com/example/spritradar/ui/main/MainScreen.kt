@@ -11,6 +11,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -23,6 +25,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,6 +36,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -40,6 +45,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
@@ -52,10 +58,15 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
@@ -190,6 +201,7 @@ internal fun SpritRadarContent(
     onNavigateStation: (StationEvaluation) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showLegalInfoDialog by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val evaluations = uiState.sortedEvaluations
     val result = uiState.routeResult
@@ -217,10 +229,43 @@ internal fun SpritRadarContent(
                     }
                 },
                 actions = {
-                    SpritRadarLogoIcon(
-                        size = 40.dp,
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.padding(end = 12.dp)
-                    )
+                    ) {
+                        // Requirement #4: Info button in the top bar next to the icon for Data Source & Legal Info
+                        Surface(
+                            color = MaterialTheme.colorScheme.secondaryContainer,
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.clickable { showLegalInfoDialog = true }
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = "ⓘ",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                                Text(
+                                    text = "Info",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            }
+                        }
+
+                        // Requirement #6: Identical App Start Icon in the top right
+                        SpritRadarLogoIcon(
+                            size = 40.dp,
+                            modifier = Modifier.clickable { showLegalInfoDialog = true }
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
@@ -233,7 +278,6 @@ internal fun SpritRadarContent(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Requirement #2: Tabs "Suche" and "Karte"
             PrimaryTabRow(
                 selectedTabIndex = uiState.selectedTab.ordinal,
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -277,11 +321,10 @@ internal fun SpritRadarContent(
                             modifier = Modifier.weight(1f)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "✕",
-                            color = Color(0xFF16A34A),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
+                        CenteredDeleteCross(
+                            tint = Color(0xFF16A34A),
+                            bgColor = Color(0xFF16A34A).copy(alpha = 0.15f),
+                            onClick = onDismissSearchMessage
                         )
                     }
                 }
@@ -289,7 +332,7 @@ internal fun SpritRadarContent(
 
             when (uiState.selectedTab) {
                 AppTab.ROUTE_PLANNER -> {
-                    // TAB 1 ("Suche"): Only route/parameter inputs and search button (no refresh button or data info)
+                    // TAB 1 ("Suche"): Only route/parameter inputs and search button
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
@@ -328,7 +371,6 @@ internal fun SpritRadarContent(
                         contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        // Requirement #3 & #7: Selected parameters in Tab "Karte" without edit button
                         item {
                             ActiveParametersHeader(
                                 uiState = uiState,
@@ -337,7 +379,6 @@ internal fun SpritRadarContent(
                             )
                         }
 
-                        // Requirement #4: Map that expands downwards with station info below the map
                         if (result != null) {
                             item {
                                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -359,7 +400,6 @@ internal fun SpritRadarContent(
                                 }
                             }
 
-                            // Historical Price Ampel Card
                             item {
                                 PriceAmpelCard(
                                     analysis = result.historicalAnalysis,
@@ -426,18 +466,26 @@ internal fun SpritRadarContent(
                             )
                         }
 
-                        // Data Source & 5-Min Refresh Info (only in Tab "Karte")
+                        // Data Source & 5-Min Refresh Info in Tab "Karte"
                         item {
                             DataSourceFooter(
                                 lastUpdated = result?.lastUpdatedTimeFormatted.orEmpty(),
                                 isLoading = uiState.isLoading,
-                                onRefreshClick = onRefreshPrices
+                                onRefreshClick = onRefreshPrices,
+                                onOpenLegalDialog = { showLegalInfoDialog = true }
                             )
                         }
                     }
                 }
             }
         }
+    }
+
+    if (showLegalInfoDialog) {
+        DataAndLegalInfoDialog(
+            lastUpdated = result?.lastUpdatedTimeFormatted.orEmpty(),
+            onDismiss = { showLegalInfoDialog = false }
+        )
     }
 }
 
@@ -569,58 +617,44 @@ private fun RoutePlannerInputCard(
             modifier = Modifier.padding(14.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            // Requirement #7: Saved Routes Bar with Delete ("✕") capability
+            // Requirement #1 & #2: Saved Routes Bar WITHOUT the hint text, and with a perfectly centered Canvas "X" button
             if (uiState.favoriteRoutes.isNotEmpty()) {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(
-                        text = "★ Gespeicherte Routen (antippen zum Laden, ✕ zum Löschen):",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        uiState.favoriteRoutes.forEach { fav ->
-                            val isCurrent = uiState.startInput.contains(fav.startName, ignoreCase = true) &&
-                                uiState.destInput.contains(fav.destName, ignoreCase = true)
-                            Surface(
-                                color = if (isCurrent) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
-                                shape = RoundedCornerShape(14.dp)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    uiState.favoriteRoutes.forEach { fav ->
+                        val isCurrent = uiState.startInput.contains(fav.startName, ignoreCase = true) &&
+                            uiState.destInput.contains(fav.destName, ignoreCase = true)
+                        val contentColor = if (isCurrent) {
+                            MaterialTheme.colorScheme.onPrimaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
+                        Surface(
+                            color = if (isCurrent) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(start = 12.dp, end = 6.dp, top = 5.dp, bottom = 5.dp)
                             ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.padding(start = 10.dp, end = 6.dp, top = 5.dp, bottom = 5.dp)
-                                ) {
-                                    Text(
-                                        text = "${fav.startName} → ${fav.destName}",
-                                        fontSize = 11.sp,
-                                        fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
-                                        color = if (isCurrent) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.clickable { onSelectFavorite(fav) }
-                                    )
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Surface(
-                                        color = Color.Black.copy(alpha = 0.14f),
-                                        shape = CircleShape,
-                                        modifier = Modifier
-                                            .size(18.dp)
-                                            .clickable { onDeleteFavorite(fav.id) }
-                                    ) {
-                                        Box(contentAlignment = Alignment.Center) {
-                                            Text(
-                                                text = "✕",
-                                                fontSize = 10.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = if (isCurrent) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                        }
-                                    }
-                                }
+                                Text(
+                                    text = "${fav.startName} → ${fav.destName}",
+                                    fontSize = 12.sp,
+                                    fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
+                                    color = contentColor,
+                                    modifier = Modifier.clickable { onSelectFavorite(fav) }
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                CenteredDeleteCross(
+                                    tint = contentColor,
+                                    bgColor = contentColor.copy(alpha = 0.16f),
+                                    onClick = { onDeleteFavorite(fav.id) }
+                                )
                             }
                         }
                     }
@@ -899,6 +933,44 @@ private fun RoutePlannerInputCard(
     }
 }
 
+/**
+ * Mathematically centered "X" button inside a circle using Canvas drawing
+ * so font metrics/padding never shift the cross off-center.
+ */
+@Composable
+private fun CenteredDeleteCross(
+    tint: Color,
+    bgColor: Color,
+    onClick: () -> Unit
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(22.dp)
+            .clip(CircleShape)
+            .background(bgColor)
+            .clickable { onClick() }
+    ) {
+        Canvas(modifier = Modifier.size(8.dp)) {
+            val stroke = 1.8.dp.toPx()
+            drawLine(
+                color = tint,
+                start = Offset(0f, 0f),
+                end = Offset(size.width, size.height),
+                strokeWidth = stroke,
+                cap = StrokeCap.Round
+            )
+            drawLine(
+                color = tint,
+                start = Offset(size.width, 0f),
+                end = Offset(0f, size.height),
+                strokeWidth = stroke,
+                cap = StrokeCap.Round
+            )
+        }
+    }
+}
+
 @Composable
 private fun SuggestionsDropdownStrip(
     suggestions: List<GeoPoint>,
@@ -937,7 +1009,8 @@ private fun SuggestionsDropdownStrip(
 private fun DataSourceFooter(
     lastUpdated: String,
     isLoading: Boolean,
-    onRefreshClick: () -> Unit
+    onRefreshClick: () -> Unit,
+    onOpenLegalDialog: () -> Unit
 ) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
@@ -950,12 +1023,25 @@ private fun DataSourceFooter(
                 .padding(horizontal = 12.dp, vertical = 10.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            Text(
-                text = "Datenquelle: Tankerkönig / MTS-K (CC BY 4.0)",
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Datenquelle: Tankerkönig / MTS-K (CC BY 4.0)",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "ⓘ Lizenzen & Rechtliches",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable { onOpenLegalDialog() }
+                )
+            }
             Text(
                 text = buildString {
                     append("Die Echtzeit-Spritpreise werden alle 5 Minuten aktualisiert.")
@@ -979,6 +1065,143 @@ private fun DataSourceFooter(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun DataAndLegalInfoDialog(
+    lastUpdated: String,
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                SpritRadarLogoIcon(size = 32.dp)
+                Text(
+                    text = "Datenquellen & Rechtliches",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.ExtraBold
+                )
+            }
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 420.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                // 1. Tankerkönig / MTS-K Attribution (CC BY 4.0)
+                LegalSectionBox(
+                    title = "1. Kraftstoffpreise & Tankstellendaten",
+                    body = buildString {
+                        append("Datenquelle: Tankerkönig (https://creativecommons.tankerkoenig.de) / Markttransparenzstelle für Kraftstoffe (MTS-K).\n")
+                        append("Lizenz: Creative Commons Namensnennung 4.0 International (CC BY 4.0).\n")
+                        append("Aktualisierung: Die Echtzeit-Preisdaten werden alle 5 Minuten aktualisiert.")
+                        if (lastUpdated.isNotBlank()) {
+                            append("\nLetzter Abruf: $lastUpdated")
+                        }
+                    },
+                    linkLabel = "CC BY 4.0 Lizenztext öffnen ↗",
+                    onLinkClick = {
+                        openExternalUrl(context, "https://creativecommons.org/licenses/by/4.0/deed.de")
+                    }
+                )
+
+                // 2. OpenStreetMap / OSRM Attribution (ODbL)
+                LegalSectionBox(
+                    title = "2. Geodaten, Ortssuche & Routenberechnung",
+                    body = "Ortsvorschläge (Nominatim) und Straßenrouten-Geometrien (Project OSRM) basieren auf Geodaten von © OpenStreetMap-Mitwirkenden unter der Open Database License (ODbL 1.0).",
+                    linkLabel = "OpenStreetMap Copyright & Lizenz ↗",
+                    onLinkClick = {
+                        openExternalUrl(context, "https://www.openstreetmap.org/copyright")
+                    }
+                )
+
+                // 3. Disclaimer on Price Accuracy & Road Safety
+                LegalSectionBox(
+                    title = "3. Haftungsausschluss & Preisangaben",
+                    body = "Alle Preis-, Umweg-, Verbrauchs- und Ersparnisberechnungen sowie die historische Preis-Ampel dienen ausschließlich der unverbindlichen Orientierung und erfolgen ohne Gewähr auf Richtigkeit, Vollständigkeit und Aktualität. Kraftstoffpreise können sich jederzeit kurzfristig ändern. Rechtlich verbindlich ist ausschließlich der vor Ort an der Zapfsäule ausgewiesene Preis.\n\nSicherheitshinweis (§ 23 Abs. 1a StVO): Bitte bediene die App niemals während der Fahrt als Fahrzeugführer."
+                )
+
+                // 4. Privacy / GDPR Notice
+                LegalSectionBox(
+                    title = "4. Datenschutz & Standortverarbeitung (DSGVO)",
+                    body = "• Standort (GPS): Dein Gerätestandort wird nur bei aktivem Antippen des ‚GPS‘-Buttons abgefragt und ausschließlich zur Routen- und Umkreisberechnung verwendet.\n• Schnittstellen: Zur Abfrage von Orten, Routen und Tankstellen werden die eingegebenen Koordinaten/Suchbegriffe direkt an Tankerkönig (creativecommons.tankerkoenig.de), OpenStreetMap Nominatim und Project OSRM übermittelt.\n• Lokale Speicherung: Fahrzeugverbrauch, Tankmenge und gespeicherte Routen werden ausschließlich lokal auf deinem Smartphone gespeichert.\n• Externe Navigation: Erst beim Klick auf ‚Mit Google Maps navigieren‘ wird Google Maps extern aufgerufen."
+                )
+
+                // 5. Trademarks
+                LegalSectionBox(
+                    title = "5. Markenrechtlicher Hinweis",
+                    body = "Alle genannten Marken- und Tankstellenbezeichnungen (wie Aral, Shell, TotalEnergies, Esso, JET, AVIA, HEM, bft, STAR, Google Maps) sind Eigentum der jeweiligen Rechteinhaber und werden ausschließlich zur sachlichen Information über die jeweilige Tankstelle genannt."
+                )
+            }
+        },
+        confirmButton = {
+            Button(onClick = onDismiss) {
+                Text("Schließen")
+            }
+        }
+    )
+}
+
+@Composable
+private fun LegalSectionBox(
+    title: String,
+    body: String,
+    linkLabel: String? = null,
+    onLinkClick: (() -> Unit)? = null
+) {
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
+        shape = RoundedCornerShape(10.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(10.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = body,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            if (linkLabel != null && onLinkClick != null) {
+                Text(
+                    text = linkLabel,
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .padding(top = 2.dp)
+                        .clickable { onLinkClick() }
+                )
+            }
+        }
+    }
+}
+
+private fun openExternalUrl(context: Context, url: String) {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(intent)
+    } catch (_: Exception) {
+        // Ignore if no browser available
     }
 }
 
@@ -1084,7 +1307,7 @@ fun MainScreenPreview() {
             historicalAnalysis = hist,
             isLiveApiData = true,
             dataSourceNote = "Datenquelle: Tankerkönig / MTS-K (CC BY 4.0)",
-            lastUpdatedTimeFormatted = "17:55:00 Uhr"
+            lastUpdatedTimeFormatted = "18:15:00 Uhr"
         ),
         selectedStationId = "1"
     )
