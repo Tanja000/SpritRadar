@@ -1,23 +1,46 @@
+import java.util.Properties
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.kotlin.serialization)
 }
 
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties().apply {
+  if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.inputStream().use { load(it) }
+  }
+}
+
 android {
-  namespace = "com.example.spritradar"
+  namespace = "com.lilapause.spritradar"
   compileSdk = 36
   defaultConfig {
-    applicationId = "com.example.spritradar"
+    applicationId = "com.lilapause.spritradar"
     minSdk = 24
     targetSdk = 36
     versionCode = 1
     versionName = "1.0"
   }
 
+  signingConfigs {
+    create("release") {
+      val ksFile = rootProject.file(keystoreProperties.getProperty("storeFile", "spritradar-upload-keystore.jks"))
+      if (ksFile.exists()) {
+        storeFile = ksFile
+        storePassword = keystoreProperties.getProperty("storePassword", "SpritRadar2026!")
+        keyAlias = keystoreProperties.getProperty("keyAlias", "spritradar_upload")
+        keyPassword = keystoreProperties.getProperty("keyPassword", "SpritRadar2026!")
+      }
+    }
+  }
+
   buildTypes {
     release {
-      isMinifyEnabled = false
+      isMinifyEnabled = true
+      isShrinkResources = true
+      signingConfig = signingConfigs.getByName("release")
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
   }
