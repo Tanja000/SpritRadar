@@ -87,7 +87,9 @@ import com.lilapause.spritradar.model.GeoPoint
 import com.lilapause.spritradar.model.RouteSearchResult
 import com.lilapause.spritradar.model.SortMode
 import com.lilapause.spritradar.model.StationEvaluation
+import com.lilapause.spritradar.ui.components.DonationDialog
 import com.lilapause.spritradar.ui.components.InteractiveRouteMap
+import com.lilapause.spritradar.ui.components.NonIntrusiveAdBanner
 import com.lilapause.spritradar.ui.components.PriceAmpelCard
 import com.lilapause.spritradar.ui.components.SpritRadarLogoIcon
 import com.lilapause.spritradar.ui.components.StationCard
@@ -239,6 +241,7 @@ internal fun SpritRadarContent(
     modifier: Modifier = Modifier
 ) {
     var showLegalInfoDialog by remember { mutableStateOf(false) }
+    var showDonationDialog by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val evaluations = uiState.sortedEvaluations
     val result = uiState.routeResult
@@ -250,7 +253,7 @@ internal fun SpritRadarContent(
                 title = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
                             text = "SpritRadar",
@@ -268,9 +271,33 @@ internal fun SpritRadarContent(
                 actions = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.padding(end = 12.dp)
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        modifier = Modifier.padding(end = 10.dp)
                     ) {
+                        // Spenden-Button in der oberen Leiste
+                        Surface(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.clickable { showDonationDialog = true }
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = "☕",
+                                    fontSize = 12.sp
+                                )
+                                Text(
+                                    text = "Spenden",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
+
                         // Requirement #4: Info button in the top bar next to the icon for Data Source & Legal Info
                         Surface(
                             color = MaterialTheme.colorScheme.secondaryContainer,
@@ -280,17 +307,17 @@ internal fun SpritRadarContent(
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                                modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp)
                             ) {
                                 Text(
                                     text = "ⓘ",
-                                    fontSize = 14.sp,
+                                    fontSize = 13.sp,
                                     fontWeight = FontWeight.ExtraBold,
                                     color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
                                 Text(
                                     text = "Info",
-                                    fontSize = 12.sp,
+                                    fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
@@ -299,7 +326,7 @@ internal fun SpritRadarContent(
 
                         // Requirement #6: Identical App Start Icon in the top right
                         SpritRadarLogoIcon(
-                            size = 40.dp,
+                            size = 38.dp,
                             modifier = Modifier.clickable { showLegalInfoDialog = true }
                         )
                     }
@@ -307,6 +334,12 @@ internal fun SpritRadarContent(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
+            )
+        },
+        bottomBar = {
+            NonIntrusiveAdBanner(
+                onOpenDonationDialog = { showDonationDialog = true },
+                onOpenAdInfoDialog = { showLegalInfoDialog = true }
             )
         }
     ) { innerPadding ->
@@ -521,11 +554,21 @@ internal fun SpritRadarContent(
     if (showLegalInfoDialog) {
         DataAndLegalInfoDialog(
             lastUpdated = result?.lastUpdatedTimeFormatted.orEmpty(),
+            onOpenDonationDialog = {
+                showLegalInfoDialog = false
+                showDonationDialog = true
+            },
             onResetLocalData = {
                 onResetLocalData()
                 showLegalInfoDialog = false
             },
             onDismiss = { showLegalInfoDialog = false }
+        )
+    }
+
+    if (showDonationDialog) {
+        DonationDialog(
+            onDismiss = { showDonationDialog = false }
         )
     }
 }
@@ -1112,6 +1155,7 @@ private fun DataSourceFooter(
 @Composable
 private fun DataAndLegalInfoDialog(
     lastUpdated: String,
+    onOpenDonationDialog: () -> Unit,
     onResetLocalData: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -1143,7 +1187,7 @@ private fun DataAndLegalInfoDialog(
                 // 1. Impressum (§ 5 DDG) & Verantwortliche Stelle (Art. 4 Nr. 7 DSGVO)
                 LegalSectionBox(
                     title = "1. Impressum (§ 5 DDG) & Verantwortliche",
-                    body = "Tanja Reize\nWilhelm-Busch-Str. 41\n81477 München, Deutschland\nE-Mail: tanjareize@web.de\n\nApp-Paketname: com.lilapause.spritradar (Version 1.0)",
+                    body = "Tanja Reize\nWilhelm-Busch-Str. 41\n81477 München, Deutschland\nE-Mail: tanjareize@web.de\n\nApp-Paketname: com.lilapause.spritradar • Version 2.0 (Build 2)",
                     linkLabel = "✉ E-Mail an tanjareize@web.de senden",
                     onLinkClick = {
                         openExternalUrl(context, "mailto:tanjareize@web.de?subject=SpritRadar%20Anfrage")
@@ -1177,10 +1221,10 @@ private fun DataAndLegalInfoDialog(
                     }
                 )
 
-                // 4. Privacy / GDPR Notice (Art. 13, 14 DSGVO)
+                // 4. Privacy / GDPR Notice (Art. 13, 14 DSGVO) + Ads & Donations
                 LegalSectionBox(
-                    title = "4. Datenschutzerklärung (DSGVO)",
-                    body = "• Verantwortliche: Tanja Reize, Wilhelm-Busch-Str. 41, 81477 München (tanjareize@web.de).\n• Kein Tracking / Kein Konto: Keine Registrierung, keine Werbe-SDKs, keine eigenen Server-Datenbanken.\n• Standort (GPS, Art. 6 Abs. 1 lit. a DSGVO): Dein Standort wird ausschließlich im Vordergrund bei aktivem Antippen des ‚GPS‘-Buttons abgefragt (keine Hintergrund-Ortung).\n• Externe APIs (Art. 6 Abs. 1 lit. b DSGVO): Zur Berechnung von Orten, Routen und Preisen werden Suchkoordinaten/Ortsnamen per HTTPS an Tankerkönig (MTS-K), OpenStreetMap Nominatim und Project OSRM übermittelt.\n• Lokale Speicherung: Verbrauch, Tankgröße und gespeicherte Routen liegen nur lokal auf deinem Gerät und sind jederzeit löschbar.\n• Betroffenenrechte (Art. 15–21, 77 DSGVO): Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch, Widerruf von Einwilligungen sowie Beschwerde bei einer Aufsichtsbehörde (z. B. BayLDA, Promenade 18, 91522 Ansbach)."
+                    title = "4. Datenschutzerklärung (DSGVO), Werbung & Spenden",
+                    body = "• Verantwortliche: Tanja Reize, Wilhelm-Busch-Str. 41, 81477 München (tanjareize@web.de).\n• Standort (GPS, Art. 6 Abs. 1 lit. a DSGVO): Dein Standort wird ausschließlich im Vordergrund bei aktivem Antippen des ‚GPS‘-Buttons abgefragt (keine Hintergrund-Ortung).\n• Externe APIs (Art. 6 Abs. 1 lit. b DSGVO): Zur Berechnung von Orten, Routen und Preisen werden Suchkoordinaten/Ortsnamen per HTTPS an Tankerkönig (MTS-K), OpenStreetMap Nominatim und Project OSRM übermittelt.\n• Werbefenster (§ 6 Abs. 1 DDG / Art. 6 Abs. 1 lit. f DSGVO): Am unteren Bildschirmrand wird ein kompaktes, als ‚Anzeige‘ gekennzeichnetes Banner eingeblendet. Erst beim aktiven Antippen einer Anzeige wird die verlinkte Partner-Webseite im externen Browser geöffnet.\n• Freiwillige Spenden (PayPal): Beim Klick auf ‚Spenden‘ wirst du extern zu PayPal (PayPal (Europe) S.à r.l. et Cie, S.C.A.) bzw. deinem E-Mail-Programm weitergeleitet. In der App selbst werden keine Zahlungsdaten erhoben.\n• Betroffenenrechte (Art. 15–21, 77 DSGVO): Auskunft, Berichtigung, Löschung, Einschränkung, Widerspruch, Widerruf sowie Beschwerderecht bei einer Aufsichtsbehörde (z. B. BayLDA, Promenade 18, 91522 Ansbach)."
                 )
 
                 // 5. Disclaimer on Price Accuracy & Road Safety
@@ -1192,10 +1236,22 @@ private fun DataAndLegalInfoDialog(
                 // 6. Trademarks
                 LegalSectionBox(
                     title = "6. Markenrechtlicher Hinweis",
-                    body = "Alle genannten Marken- und Tankstellenbezeichnungen (wie Aral, Shell, TotalEnergies, Esso, JET, AVIA, HEM, bft, STAR, Google Maps) sind Eigentum der jeweiligen Rechteinhaber und dienen ausschließlich der sachlichen Information."
+                    body = "Alle genannten Marken- und Tankstellenbezeichnungen (wie Aral, Shell, TotalEnergies, Esso, JET, AVIA, HEM, bft, STAR, Google Maps, PayPal) sind Eigentum der jeweiligen Rechteinhaber und dienen ausschließlich der sachlichen Information."
                 )
 
-                // 7. Data Deletion Button (DSGVO Art. 17 & Google Play Data Safety)
+                // 7. Quick Actions: Spenden & Daten zurücksetzen
+                Button(
+                    onClick = onOpenDonationDialog,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = "☕ SpritRadar freiwillig unterstützen (Spenden)",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
                 OutlinedButton(
                     onClick = onResetLocalData,
                     modifier = Modifier.fillMaxWidth(),

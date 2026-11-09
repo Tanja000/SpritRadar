@@ -2,7 +2,7 @@
 
 **App-Name:** SpritRadar  
 **Paketname (Application ID):** `com.lilapause.spritradar`  
-**Version:** `1.0` (`versionCode = 1`)  
+**Version:** `2.0` (`versionCode = 2`)  
 **Target SDK:** Android 16 (API 36) / Min SDK: Android 7.0 (API 24)
 
 ---
@@ -63,7 +63,7 @@ Alle Kraftstoffpreise basieren auf den offiziellen Echtzeitdaten von Tankerköni
 ## 3. Ausfüllhilfe für „App-Inhalte“ (App Content) in der Play Console
 
 1. **Datenschutzerklärung:** URL zu deiner hochgeladenen `index.html` eintragen.
-2. **Werbung (Ads):** *„Nein, meine App enthält keine Werbung.“*
+2. **Werbung (Ads):** *„Ja, meine App enthält Werbung.“* (Die erforderliche Berechtigung `com.google.android.gms.permission.AD_ID` für Android 13+ ist im Manifest hinterlegt und das Banner ist richtlinienkonform als „Anzeige“ gekennzeichnet).
 3. **App-Zugriff:** *„Alle Funktionen sind ohne besonderen Zugriff verfügbar“* (kein Login nötig).
 4. **Inhaltseinstufung (IARC):** Kategorie *„Dienstprogramme, Produktivität, Kommunikation oder Sonstiges“* → Alle Fragen zu Gewalt/Jugendschutz/Glücksspiel mit *„Nein“* beantworten (ergibt **USK 0 / PEGI 3**).
 5. **Zielgruppe und Inhalte:** Zielaltersgruppe **18 und älter** (da die App für Autofahrer konzipiert ist; *„Nein“* bei „Könnte die App unbeabsichtigt Kinder ansprechen?“).

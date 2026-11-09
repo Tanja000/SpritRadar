@@ -132,7 +132,7 @@ class SpritRadarRepository {
                 requestMethod = "GET"
                 connectTimeout = 2500
                 readTimeout = 2500
-                setRequestProperty("User-Agent", "SpritRadar/1.0 (com.lilapause.spritradar; contact: tanjareize@web.de)")
+                setRequestProperty("User-Agent", "SpritRadar/2.0 (com.lilapause.spritradar; contact: tanjareize@web.de)")
                 setRequestProperty("Accept-Language", "de-DE,de;q=0.9")
             }
             if (conn.responseCode == 200) {
@@ -185,7 +185,7 @@ class SpritRadarRepository {
                 requestMethod = "GET"
                 connectTimeout = 4500
                 readTimeout = 4500
-                setRequestProperty("User-Agent", "SpritRadar/1.0 (com.lilapause.spritradar; contact: tanjareize@web.de)")
+                setRequestProperty("User-Agent", "SpritRadar/2.0 (com.lilapause.spritradar; contact: tanjareize@web.de)")
                 setRequestProperty("Accept-Language", "de-DE,de;q=0.9")
             }
             if (conn.responseCode == 200) {
@@ -243,7 +243,7 @@ class SpritRadarRepository {
                 requestMethod = "GET"
                 connectTimeout = 5000
                 readTimeout = 5000
-                setRequestProperty("User-Agent", "SpritRadar/1.0 (com.lilapause.spritradar; contact: tanjareize@web.de)")
+                setRequestProperty("User-Agent", "SpritRadar/2.0 (com.lilapause.spritradar; contact: tanjareize@web.de)")
             }
             if (conn.responseCode == 200) {
                 val json = JSONObject(conn.inputStream.bufferedReader().use { it.readText() })
@@ -331,7 +331,7 @@ class SpritRadarRepository {
                     requestMethod = "GET"
                     connectTimeout = 5000
                     readTimeout = 5000
-                    setRequestProperty("User-Agent", "SpritRadar/1.0 (com.lilapause.spritradar; contact: tanjareize@web.de)")
+                    setRequestProperty("User-Agent", "SpritRadar/2.0 (com.lilapause.spritradar; contact: tanjareize@web.de)")
                 }
                 if (conn.responseCode == 200) {
                     val body = conn.inputStream.bufferedReader().use { it.readText() }
